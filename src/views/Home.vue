@@ -8,7 +8,7 @@
 
     <ion-content :fullscreen="true">
       <div id="container">
-        <ion-button expand="block" href="/local" size="large">
+        <ion-button router-link="/local" expand="block" size="large">
           Local game
         </ion-button>
         <br />
