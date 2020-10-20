@@ -2,20 +2,19 @@
   <ion-page>
     <ion-header :translucent="true">
       <ion-toolbar>
-        <ion-title>Blank</ion-title>
+        <ion-title>Byffel Meir</ion-title>
       </ion-toolbar>
     </ion-header>
 
     <ion-content :fullscreen="true">
       <ion-header collapse="condense">
         <ion-toolbar>
-          <ion-title size="large">Blank</ion-title>
+          <ion-title size="large">Byffel Meir</ion-title>
         </ion-toolbar>
       </ion-header>
 
       <div id="container">
-        <die :value="3"></die>
-        <die :value="5"></die>
+        <dice :values="getValues()"></dice>
       </div>
     </ion-content>
   </ion-page>
@@ -30,7 +29,8 @@ import {
   IonToolbar,
 } from '@ionic/vue';
 import { defineComponent } from 'vue';
-import Die from '../components/Die.vue';
+import Dice from '@/components/Dice.vue';
+import { DiceModel } from '@/models/dice.model';
 
 export default defineComponent({
   name: 'Home',
@@ -40,7 +40,12 @@ export default defineComponent({
     IonPage,
     IonTitle,
     IonToolbar,
-    Die,
+    Dice,
+  },
+  methods: {
+    getValues() {
+      return new DiceModel(2, 5);
+    },
   },
 });
 </script>
