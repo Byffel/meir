@@ -14,16 +14,8 @@
       </ion-header>
 
       <div id="container">
-        <strong>Ready to create an app?</strong>
-        <p>
-          Start with Ionic
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://ionicframework.com/docs/components"
-            >UI Components</a
-          >
-        </p>
+        <die :value="3"></die>
+        <die :value="5"></die>
       </div>
     </ion-content>
   </ion-page>
@@ -38,6 +30,7 @@ import {
   IonToolbar,
 } from '@ionic/vue';
 import { defineComponent } from 'vue';
+import Die from '../components/Die.vue';
 
 export default defineComponent({
   name: 'Home',
@@ -47,6 +40,7 @@ export default defineComponent({
     IonPage,
     IonTitle,
     IonToolbar,
+    Die,
   },
 });
 </script>
