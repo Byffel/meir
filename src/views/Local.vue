@@ -1,8 +1,18 @@
 <template>
   <ion-page>
+    <ion-header :translucent="true">
+      <ion-toolbar>
+        <ion-title>Meir</ion-title>
+      </ion-toolbar>
+    </ion-header>
+
     <ion-content :fullscreen="true">
-      Local game
-      <dice :values="getValues()"></dice>
+      <div id="container">
+        <div class="dices">
+          <dice :values="values"></dice>
+        </div>
+        <ion-button @click="getValues()">roll the dices</ion-button>
+      </div>
     </ion-content>
   </ion-page>
 </template>
@@ -20,9 +30,18 @@ export default defineComponent({
     IonPage,
     Dice
   },
+  data() {
+    return {
+      values: new DiceModel(5, 3)
+    };
+  },
   methods: {
     getValues() {
-      return new DiceModel(2, 5);
+      const result = new DiceModel(this.getRandomInt(6), this.getRandomInt(6));
+      this.values = result;
+    },
+    getRandomInt(max: number) {
+      return Math.floor(Math.random() * Math.floor(max)) + 1;
     }
   }
 });
@@ -37,23 +56,5 @@ export default defineComponent({
   right: 0;
   top: 50%;
   transform: translateY(-50%);
-}
-
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
-}
-
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-
-  color: #8c8c8c;
-
-  margin: 0;
-}
-
-#container a {
-  text-decoration: none;
 }
 </style>

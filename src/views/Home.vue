@@ -7,15 +7,14 @@
     </ion-header>
 
     <ion-content :fullscreen="true">
-      <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title size="large">Meir</ion-title>
-        </ion-toolbar>
-      </ion-header>
-
       <div id="container">
-        <ion-button expand="block" href="/local" size="large">Local game</ion-button><br>
-        <ion-button expand="block" :disabled="true" size="large">Remote game</ion-button>
+        <ion-button expand="block" href="/local" size="large">
+          Local game
+        </ion-button>
+        <br />
+        <ion-button expand="block" :disabled="true" size="large">
+          Remote game
+        </ion-button>
       </div>
     </ion-content>
   </ion-page>

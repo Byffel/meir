@@ -1,6 +1,6 @@
 <template>
-  <die :value="firstValue"></die>
-  <die :value="secondValue"></die>
+  <die :value="calcFirstValue"></die>
+  <die :value="calcSecondValue"></die>
 </template>
 
 <script lang="ts">
@@ -22,10 +22,15 @@ export default defineComponent({
   props: {
     values: { type: DiceModel, required: true }
   },
-  mounted() {
-    const { value1, value2 } = this.values;
-    this.firstValue = value1 > value2 ? value1 : value2;
-    this.secondValue = value1 <= value2 ? value1 : value2;
+  computed: {
+    calcFirstValue(): number {
+      const { value1, value2 } = this.values;
+      return value1 > value2 ? value1 : value2;
+    },
+    calcSecondValue(): number {
+      const { value1, value2 } = this.values;
+      return value1 <= value2 ? value1 : value2;
+    }
   }
 });
 </script>
