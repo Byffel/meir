@@ -1,24 +1,30 @@
 <template>
   <ion-page>
     <ion-content :fullscreen="true">
-        Local game
+      Local game
+      <dice :values="getValues()"></dice>
     </ion-content>
   </ion-page>
 </template>
 
 <script lang="ts">
-import {
-  IonContent,
-  IonPage,
-} from '@ionic/vue';
+import { IonContent, IonPage } from '@ionic/vue';
 import { defineComponent } from 'vue';
+import Dice from '@/components/Dice.vue';
+import { DiceModel } from '@/models/dice.model';
 
 export default defineComponent({
   name: 'Home',
   components: {
     IonContent,
     IonPage,
+    Dice
   },
+  methods: {
+    getValues() {
+      return new DiceModel(2, 5);
+    }
+  }
 });
 </script>
 
