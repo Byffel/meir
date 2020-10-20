@@ -1,16 +1,7 @@
 <template>
   <ion-page>
-    <ion-header :translucent="true">
-      <ion-toolbar>
-        <ion-title>Meir</ion-title>
-      </ion-toolbar>
-    </ion-header>
-
     <ion-content :fullscreen="true">
-      <div id="container">
-        <ion-button expand="block" href="/local" size="large">Local game</ion-button><br>
-        <ion-button expand="block" :disabled="true" size="large">Remote game</ion-button>
-      </div>
+        Local game
     </ion-content>
   </ion-page>
 </template>
@@ -18,10 +9,7 @@
 <script lang="ts">
 import {
   IonContent,
-  IonButton,
   IonPage,
-  IonTitle,
-  IonToolbar,
 } from '@ionic/vue';
 import { defineComponent } from 'vue';
 
@@ -29,10 +17,7 @@ export default defineComponent({
   name: 'Home',
   components: {
     IonContent,
-    IonButton,
     IonPage,
-    IonTitle,
-    IonToolbar,
   },
 });
 </script>
