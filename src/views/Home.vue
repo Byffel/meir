@@ -12,7 +12,7 @@
           Local game
         </ion-button>
         <br />
-        <ion-button expand="block" :disabled="true" size="large">
+        <ion-button router-link="/lobby" expand="block" size="large">
           Remote game
         </ion-button>
       </div>

@@ -2,6 +2,7 @@ import { createRouter, createWebHashHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
 import Home from '../views/Home.vue';
 import Local from '../views/Local.vue';
+import Lobby from '../views/Lobby.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -17,6 +18,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/local',
     name: 'Local',
     component: Local
+  },
+  {
+    path: '/lobby',
+    name: 'Lobby',
+    component: Lobby
   }
 ];
 
