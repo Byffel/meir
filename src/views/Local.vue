@@ -7,11 +7,26 @@
     </ion-header>
 
     <ion-content :fullscreen="true">
+      {{ gameState }}
       <div id="container">
         <div class="dices">
-          <dice :values="values"></dice>
+          <dice v-if="displayDice" :values="values"></dice>
         </div>
-        <ion-button @click="getValues()">roll the dices</ion-button>
+        <ion-button v-if="hasOperation('roll')" @click="roll()"
+          >roll</ion-button
+        >
+        <ion-button v-if="hasOperation('peak')" @click="peak()"
+          >peak</ion-button
+        >
+        <ion-button v-if="hasOperation('pass')" @click="pass()"
+          >pass</ion-button
+        >
+        <ion-button v-if="hasOperation('accuse')" @click="accuse()"
+          >du lügsch!</ion-button
+        >
+        <ion-button v-if="hasOperation('restart')" @click="restart()"
+          >restart</ion-button
+        >
       </div>
     </ion-content>
   </ion-page>
@@ -22,6 +37,7 @@ import { IonContent, IonPage } from '@ionic/vue';
 import { defineComponent } from 'vue';
 import Dice from '@/components/Dice.vue';
 import { DiceModel } from '@/models/dice.model';
+import { MeirGame } from '@/services/game.service';
 
 export default defineComponent({
   name: 'Home',
@@ -32,16 +48,37 @@ export default defineComponent({
   },
   data() {
     return {
-      values: new DiceModel(5, 3)
+      gameState: new MeirGame()
     };
   },
-  methods: {
-    getValues() {
-      const result = new DiceModel(this.getRandomInt(6), this.getRandomInt(6));
-      this.values = result;
+  computed: {
+    values(): DiceModel {
+      return this.gameState.getValues();
     },
-    getRandomInt(max: number) {
-      return Math.floor(Math.random() * Math.floor(max)) + 1;
+    displayDice(): boolean {
+      return this.gameState.displayDice();
+    }
+  },
+  methods: {
+    roll() {
+      // const result = new DiceModel(this.getRandomInt(6), this.getRandomInt(6));
+      // this.values = result;
+      this.gameState.roll();
+    },
+    peak() {
+      this.gameState.peak();
+    },
+    pass() {
+      this.gameState.pass();
+    },
+    accuse() {
+      this.gameState.accuse();
+    },
+    restart() {
+      this.gameState.restart();
+    },
+    hasOperation(operation: string): boolean {
+      return this.gameState.hasOperation(operation);
     }
   }
 });
