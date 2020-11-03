@@ -3,6 +3,8 @@ export interface MeirGameOperations {
   peak(): void;
   pass(): void;
   accuse(): void;
+  restart(): void;
+  hasOperation(operation: string): boolean;
 }
 
 export class MeirGame implements MeirGameOperations {
@@ -28,6 +30,13 @@ export class MeirGame implements MeirGameOperations {
     this.state = this.state.accuse();
     this.logCurrentState();
   }
+  restart(): void {
+    this.state = this.state.restart();
+    this.logCurrentState();
+  }
+  hasOperation(operation: string): boolean {
+    return this.state.hasOperation(operation);
+  }
 
   private logCurrentState(): void {
     console.log(this.state);
@@ -35,6 +44,8 @@ export class MeirGame implements MeirGameOperations {
 }
 
 abstract class MeirState implements MeirGameOperations {
+  constructor(public name: string, private availableOperations: string[]) {}
+
   roll(): MeirState {
     throw new Error('Invalid operation');
   }
@@ -47,15 +58,30 @@ abstract class MeirState implements MeirGameOperations {
   accuse(): MeirState {
     throw new Error('Invalid operation');
   }
+  restart(): MeirState {
+    throw new Error('Invalid operation');
+  }
+
+  public hasOperation(operation: string): boolean {
+    console.log(operation, this.availableOperations);
+    return this.availableOperations.includes(operation);
+  }
 }
 
 class MeirStartedState extends MeirState {
+  constructor() {
+    super('meirStarted', ['roll']);
+  }
   public roll(): MeirState {
     return new RolledOnceState();
   }
 }
 
 class RolledOnceState extends MeirState {
+  constructor() {
+    super('rolledOnce', ['peak', 'pass']);
+  }
+
   public peak(): MeirState {
     return new PeakedState();
   }
@@ -66,6 +92,9 @@ class RolledOnceState extends MeirState {
 }
 
 class PeakedState extends MeirState {
+  constructor() {
+    super('peaked', ['roll', 'pass']);
+  }
   public roll(): MeirState {
     return new RolledTwiceState();
   }
@@ -76,14 +105,20 @@ class PeakedState extends MeirState {
 }
 
 class RolledTwiceState extends MeirState {
+  constructor() {
+    super('rolledTwice', ['pass']);
+  }
   public pass(): MeirState {
     return new PassedState();
   }
 }
 
 class PassedState extends MeirState {
+  constructor() {
+    super('passed', ['roll', 'pass', 'accuse']);
+  }
   public roll(): MeirState {
-    return new RolledTwiceState();
+    return new RolledOnceState();
   }
 
   public pass(): MeirState {
@@ -95,4 +130,12 @@ class PassedState extends MeirState {
   }
 }
 
-class GameOverState extends MeirState {}
+class GameOverState extends MeirState {
+  constructor() {
+    super('gameOver', ['restart']);
+  }
+
+  public restart(): MeirStartedState {
+    return new MeirStartedState();
+  }
+}
