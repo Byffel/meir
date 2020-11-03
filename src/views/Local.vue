@@ -10,7 +10,7 @@
       {{ gameState }}
       <div id="container">
         <div class="dices">
-          <dice v-if="false" :values="values"></dice>
+          <dice v-if="displayDice" :values="values"></dice>
         </div>
         <ion-button v-if="hasOperation('roll')" @click="roll()"
           >roll</ion-button
@@ -37,7 +37,7 @@ import { IonContent, IonPage } from '@ionic/vue';
 import { defineComponent } from 'vue';
 import Dice from '@/components/Dice.vue';
 import { DiceModel } from '@/models/dice.model';
-import { MeirGame } from '@/services/game';
+import { MeirGame } from '@/services/game.service';
 
 export default defineComponent({
   name: 'Home',
@@ -48,9 +48,16 @@ export default defineComponent({
   },
   data() {
     return {
-      values: {},
       gameState: new MeirGame()
     };
+  },
+  computed: {
+    values(): DiceModel {
+      return this.gameState.getValues();
+    },
+    displayDice(): boolean {
+      return this.gameState.displayDice();
+    }
   },
   methods: {
     roll() {
@@ -72,9 +79,6 @@ export default defineComponent({
     },
     hasOperation(operation: string): boolean {
       return this.gameState.hasOperation(operation);
-    },
-    getRandomInt(max: number) {
-      return Math.floor(Math.random() * Math.floor(max)) + 1;
     }
   }
 });
