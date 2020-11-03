@@ -11,7 +11,7 @@
         <div class="dices">
           <dice :values="values"></dice>
         </div>
-        <ion-button @click="getValues()">roll the dices</ion-button>
+        <ion-button @click="getValues()">roll the dice</ion-button>
       </div>
     </ion-content>
   </ion-page>
