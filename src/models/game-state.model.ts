@@ -1,9 +1,10 @@
-import { DiceModel } from '@/models/dice.model';
+import { MeirValue } from '@/models/meir-value.enum';
 
 export interface GameStateModel {
   name: string;
   availableOperations: string[];
-  values: DiceModel;
+  value: MeirValue;
+  passValue: MeirValue;
   displayDice: boolean;
 }
 
@@ -14,7 +15,8 @@ export class GameStateModelBuilder {
     this.gameState = {
       name: '',
       availableOperations: [],
-      values: new DiceModel(0, 0),
+      value: MeirValue.THIRTY_ONE,
+      passValue: MeirValue.THIRTY_ONE,
       displayDice: false
     };
   }
@@ -34,8 +36,13 @@ export class GameStateModelBuilder {
     return this;
   }
 
-  setValues(values: DiceModel): GameStateModelBuilder {
-    this.gameState.values = values;
+  setValue(value: MeirValue): GameStateModelBuilder {
+    this.gameState.value = value;
+    return this;
+  }
+
+  setPassValue(passValue: MeirValue): GameStateModelBuilder {
+    this.gameState.passValue = passValue;
     return this;
   }
 
