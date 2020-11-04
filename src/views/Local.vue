@@ -12,13 +12,13 @@
         <div class="dices">
           <dice v-if="displayDice" :values="values"></dice>
         </div>
-        <div v-if="passValuesEntered">
+        <div v-if="passValueEntered">
           <ion-item>
             <ion-label position="stacked">Values</ion-label>
-            <ion-input v-model="passValues" type="text"></ion-input>
+            <ion-input v-model="passValue" type="text"></ion-input>
           </ion-item>
-          <span v-if="validatePassValues" style="color: red"
-            >PassValues invalid</span
+          <span v-if="validatePassValue" style="color: red"
+            >PassValue invalid</span
           >
         </div>
         <ion-button v-if="hasOperation('roll')" @click="roll()"
@@ -47,6 +47,7 @@ import { defineComponent } from 'vue';
 import Dice from '@/components/Dice.vue';
 import { DiceModel } from '@/models/dice.model';
 import { MeirGame } from '@/services/game.service';
+import { MeirValueService } from '@/services/meir-value.service';
 
 export default defineComponent({
   name: 'Home',
@@ -61,13 +62,13 @@ export default defineComponent({
   data() {
     return {
       gameState: new MeirGame(),
-      passValuesEntered: false,
-      passValues: '' as string
+      passValueEntered: false,
+      passValue: '' as string
     };
   },
   computed: {
     values(): DiceModel {
-      return this.gameState.getValues();
+      return MeirValueService.toDiceModel(this.gameState.getValue());
     },
     displayDice(): boolean {
       return this.gameState.displayDice();
@@ -75,22 +76,20 @@ export default defineComponent({
   },
   methods: {
     roll() {
-      // const result = new DiceModel(this.getRandomInt(6), this.getRandomInt(6));
-      // this.values = result;
       this.gameState.roll();
     },
     peak() {
       this.gameState.peak();
     },
     pass() {
-      if (this.passValuesEntered && this.validatePassValues(this.passValues)) {
-        this.passValuesEntered = false;
+      if (this.passValueEntered && this.validatePassValue(this.passValue)) {
+        this.passValueEntered = false;
 
-        const passValues: number[] = this.passValues.split('').map(v => +v);
+        const passValue: number[] = this.passValue.split('').map(v => +v);
 
-        this.gameState.pass(new DiceModel(passValues[0], passValues[1]));
+        // this.gameState.pass(new DiceModel(passValues[0], passValues[1]));
       } else {
-        this.passValuesEntered = true;
+        this.passValueEntered = true;
       }
     },
     accuse() {
@@ -102,7 +101,7 @@ export default defineComponent({
     hasOperation(operation: string): boolean {
       return this.gameState.hasOperation(operation);
     },
-    validatePassValues(input: string): boolean {
+    validatePassValue(input: string): boolean {
       if (input && !isNaN(+input) && input.length === 2) {
         return (
           input

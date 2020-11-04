@@ -1,19 +1,19 @@
-import { DiceModel } from '@/models/dice.model';
 import {
   GameStateModel,
   GameStateModelBuilder
 } from '@/models/game-state.model';
-import { NumberGenerator } from '@/services/number-generator.service';
+import { MeirValue } from '@/models/meir-value.enum';
+import { MeirValueService } from '@/services/meir-value.service';
 
 export interface MeirGameOperations {
   roll(): void;
   peak(): void;
-  pass(passValues: DiceModel): void;
+  pass(passValue: MeirValue): void;
   accuse(): void;
   restart(): void;
   hasOperation(operation: string): boolean;
   displayDice(): boolean;
-  getValues(): DiceModel;
+  getValue(): MeirValue;
 }
 
 export class MeirGame implements MeirGameOperations {
@@ -25,8 +25,8 @@ export class MeirGame implements MeirGameOperations {
   peak(): void {
     this.state = this.state.peak();
   }
-  pass(passValues: DiceModel): void {
-    this.state = this.state.pass(passValues);
+  pass(passValue: MeirValue): void {
+    this.state = this.state.pass(passValue);
   }
   accuse(): void {
     this.state = this.state.accuse();
@@ -37,8 +37,8 @@ export class MeirGame implements MeirGameOperations {
   hasOperation(operation: string): boolean {
     return this.state.hasOperation(operation);
   }
-  getValues(): DiceModel {
-    return this.state.getValues();
+  getValue(): MeirValue {
+    return this.state.getValue();
   }
   displayDice(): boolean {
     return this.state.displayDice();
@@ -54,7 +54,7 @@ abstract class MeirState implements MeirGameOperations {
   peak(): MeirState {
     throw new Error('Invalid operation');
   }
-  pass(passValues: DiceModel): MeirState {
+  pass(passValue: MeirValue): MeirState {
     throw new Error('Invalid operation');
   }
   accuse(): MeirState {
@@ -68,11 +68,11 @@ abstract class MeirState implements MeirGameOperations {
     return this.gameState.availableOperations.includes(operation);
   }
 
-  getValues(): DiceModel {
-    if (!this.gameState.values) {
-      throw new Error('values are not defined');
+  getValue(): MeirValue {
+    if (!this.gameState.value) {
+      throw new Error('value is not defined');
     }
-    return this.gameState.values;
+    return this.gameState.value;
   }
 
   displayDice(): boolean {
@@ -98,26 +98,26 @@ class RolledOnceState extends MeirState {
     const gameState = new GameStateModelBuilder()
       .name('rolledOnce')
       .addAvailableOperations('peak', 'pass')
-      .setValues(NumberGenerator.getRandomSortedDicePair())
+      .setValue(MeirValueService.randomMeirValue())
       .build();
     super(gameState);
   }
 
   public peak(): MeirState {
-    return new PeakedState(this.getValues());
+    return new PeakedState(this.getValue());
   }
 
-  public pass(passValues: DiceModel): MeirState {
-    return new PassedState(this.getValues(), passValues);
+  public pass(passValue: MeirValue): MeirState {
+    return new PassedState(this.getValue(), passValue);
   }
 }
 
 class PeakedState extends MeirState {
-  constructor(values: DiceModel) {
+  constructor(values: MeirValue) {
     const gameState = new GameStateModelBuilder()
       .name('peaked')
       .addAvailableOperations('roll', 'pass')
-      .setValues(values)
+      .setValue(values)
       .displayDice()
       .build();
     super(gameState);
@@ -126,8 +126,8 @@ class PeakedState extends MeirState {
     return new RolledTwiceState();
   }
 
-  public pass(passValues: DiceModel): MeirState {
-    return new PassedState(this.getValues(), passValues);
+  public pass(passValue: MeirValue): MeirState {
+    return new PassedState(this.getValue(), passValue);
   }
 }
 
@@ -136,22 +136,22 @@ class RolledTwiceState extends MeirState {
     const gameState = new GameStateModelBuilder()
       .name('rolledTwice')
       .addAvailableOperations('pass')
-      .setValues(NumberGenerator.getRandomSortedDicePair())
+      .setValue(MeirValueService.randomMeirValue())
       .build();
     super(gameState);
   }
-  public pass(values: DiceModel): MeirState {
-    return new PassedState(this.getValues(), values);
+  public pass(values: MeirValue): MeirState {
+    return new PassedState(this.getValue(), values);
   }
 }
 
 class PassedState extends MeirState {
-  constructor(values: DiceModel, passValues: DiceModel) {
+  constructor(values: MeirValue, passValue: MeirValue) {
     const gameState = new GameStateModelBuilder()
       .name('passed')
       .addAvailableOperations('roll', 'pass', 'accuse')
-      .setValues(values)
-      .setPassValues(passValues)
+      .setValue(values)
+      .setPassValue(passValue)
       .build();
     super(gameState);
   }
@@ -159,21 +159,21 @@ class PassedState extends MeirState {
     return new RolledOnceState();
   }
 
-  public pass(passValues: DiceModel): MeirState {
-    return new PassedState(this.getValues(), passValues);
+  public pass(passValue: MeirValue): MeirState {
+    return new PassedState(this.getValue(), passValue);
   }
 
   public accuse(): MeirState {
-    return new GameOverState(this.getValues());
+    return new GameOverState(this.getValue());
   }
 }
 
 class GameOverState extends MeirState {
-  constructor(values: DiceModel) {
+  constructor(values: MeirValue) {
     const gameState = new GameStateModelBuilder()
       .name('gameOver')
       .addAvailableOperations('restart')
-      .setValues(values)
+      .setValue(values)
       .build();
     super(gameState);
   }
