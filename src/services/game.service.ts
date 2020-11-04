@@ -8,7 +8,7 @@ import { NumberGenerator } from '@/services/number-generator.service';
 export interface MeirGameOperations {
   roll(): void;
   peak(): void;
-  pass(): void;
+  pass(passValues: DiceModel): void;
   accuse(): void;
   restart(): void;
   hasOperation(operation: string): boolean;
@@ -25,8 +25,8 @@ export class MeirGame implements MeirGameOperations {
   peak(): void {
     this.state = this.state.peak();
   }
-  pass(): void {
-    this.state = this.state.pass();
+  pass(passValues: DiceModel): void {
+    this.state = this.state.pass(passValues);
   }
   accuse(): void {
     this.state = this.state.accuse();
@@ -54,7 +54,7 @@ abstract class MeirState implements MeirGameOperations {
   peak(): MeirState {
     throw new Error('Invalid operation');
   }
-  pass(): MeirState {
+  pass(passValues: DiceModel): MeirState {
     throw new Error('Invalid operation');
   }
   accuse(): MeirState {
@@ -107,8 +107,8 @@ class RolledOnceState extends MeirState {
     return new PeakedState(this.getValues());
   }
 
-  public pass(): MeirState {
-    return new PassedState(this.getValues());
+  public pass(passValues: DiceModel): MeirState {
+    return new PassedState(this.getValues(), passValues);
   }
 }
 
@@ -126,8 +126,8 @@ class PeakedState extends MeirState {
     return new RolledTwiceState();
   }
 
-  public pass(): MeirState {
-    return new PassedState(this.getValues());
+  public pass(passValues: DiceModel): MeirState {
+    return new PassedState(this.getValues(), passValues);
   }
 }
 
@@ -140,17 +140,18 @@ class RolledTwiceState extends MeirState {
       .build();
     super(gameState);
   }
-  public pass(): MeirState {
-    return new PassedState(this.getValues());
+  public pass(values: DiceModel): MeirState {
+    return new PassedState(this.getValues(), values);
   }
 }
 
 class PassedState extends MeirState {
-  constructor(values: DiceModel) {
+  constructor(values: DiceModel, passValues: DiceModel) {
     const gameState = new GameStateModelBuilder()
       .name('passed')
       .addAvailableOperations('roll', 'pass', 'accuse')
       .setValues(values)
+      .setPassValues(passValues)
       .build();
     super(gameState);
   }
@@ -158,8 +159,8 @@ class PassedState extends MeirState {
     return new RolledOnceState();
   }
 
-  public pass(): MeirState {
-    return new PassedState(this.getValues());
+  public pass(passValues: DiceModel): MeirState {
+    return new PassedState(this.getValues(), passValues);
   }
 
   public accuse(): MeirState {

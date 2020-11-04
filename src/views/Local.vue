@@ -12,6 +12,15 @@
         <div class="dices">
           <dice v-if="displayDice" :values="values"></dice>
         </div>
+        <div v-if="passValuesEntered">
+          <ion-item>
+            <ion-label position="stacked">Values</ion-label>
+            <ion-input v-model="passValues" type="text"></ion-input>
+          </ion-item>
+          <span v-if="validatePassValues" style="color: red"
+            >PassValues invalid</span
+          >
+        </div>
         <ion-button v-if="hasOperation('roll')" @click="roll()"
           >roll</ion-button
         >
@@ -33,7 +42,7 @@
 </template>
 
 <script lang="ts">
-import { IonContent, IonPage } from '@ionic/vue';
+import { IonContent, IonPage, IonLabel, IonInput, IonItem } from '@ionic/vue';
 import { defineComponent } from 'vue';
 import Dice from '@/components/Dice.vue';
 import { DiceModel } from '@/models/dice.model';
@@ -44,11 +53,16 @@ export default defineComponent({
   components: {
     IonContent,
     IonPage,
+    IonLabel,
+    IonInput,
+    IonItem,
     Dice
   },
   data() {
     return {
-      gameState: new MeirGame()
+      gameState: new MeirGame(),
+      passValuesEntered: false,
+      passValues: '' as string
     };
   },
   computed: {
@@ -69,7 +83,15 @@ export default defineComponent({
       this.gameState.peak();
     },
     pass() {
-      this.gameState.pass();
+      if (this.passValuesEntered && this.validatePassValues(this.passValues)) {
+        this.passValuesEntered = false;
+
+        const passValues: number[] = this.passValues.split('').map(v => +v);
+
+        this.gameState.pass(new DiceModel(passValues[0], passValues[1]));
+      } else {
+        this.passValuesEntered = true;
+      }
     },
     accuse() {
       this.gameState.accuse();
@@ -79,6 +101,18 @@ export default defineComponent({
     },
     hasOperation(operation: string): boolean {
       return this.gameState.hasOperation(operation);
+    },
+    validatePassValues(input: string): boolean {
+      if (input && !isNaN(+input) && input.length === 2) {
+        return (
+          input
+            .split('')
+            .map(v => +v)
+            .filter(v => v >= 1 && v <= 6).length === 2
+        );
+      }
+
+      return false;
     }
   }
 });

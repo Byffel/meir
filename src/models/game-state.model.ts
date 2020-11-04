@@ -4,6 +4,7 @@ export interface GameStateModel {
   name: string;
   availableOperations: string[];
   values: DiceModel;
+  passValues: DiceModel;
   displayDice: boolean;
 }
 
@@ -15,6 +16,7 @@ export class GameStateModelBuilder {
       name: '',
       availableOperations: [],
       values: new DiceModel(0, 0),
+      passValues: new DiceModel(0, 0),
       displayDice: false
     };
   }
@@ -36,6 +38,11 @@ export class GameStateModelBuilder {
 
   setValues(values: DiceModel): GameStateModelBuilder {
     this.gameState.values = values;
+    return this;
+  }
+
+  setPassValues(passValues: DiceModel): GameStateModelBuilder {
+    this.gameState.passValues = passValues;
     return this;
   }
 
