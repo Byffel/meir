@@ -1,6 +1,8 @@
 import { DiceModel } from '@/models/dice.model';
 import { MeirValue } from '@/models/meir-value.enum';
 
+type MeirValueStrings = keyof typeof MeirValue;
+
 export class MeirValueService {
   public static compare = (a: MeirValue, b: MeirValue): number => {
     return a - b;
@@ -13,6 +15,18 @@ export class MeirValueService {
       .map(d => +d)
       .filter(d => d > 0);
     return new DiceModel(digits[0], digits[1]);
+  }
+
+  public static toMeirValue(value: number): MeirValue {
+    if (value === 21) {
+      return MeirValue.MEIR;
+    } else {
+      const modifiedValue: number = value % 11 === 0 ? value * 10 : value;
+      const key: MeirValueStrings = MeirValue[
+        modifiedValue
+      ] as MeirValueStrings;
+      return MeirValue[key];
+    }
   }
 
   public static randomMeirValue(): MeirValue {

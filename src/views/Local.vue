@@ -48,6 +48,7 @@ import Dice from '@/components/Dice.vue';
 import { DiceModel } from '@/models/dice.model';
 import { MeirGame } from '@/services/game.service';
 import { MeirValueService } from '@/services/meir-value.service';
+import { MeirValue } from '@/models/meir-value.enum';
 
 export default defineComponent({
   name: 'Home',
@@ -85,9 +86,14 @@ export default defineComponent({
       if (this.passValueEntered && this.validatePassValue(this.passValue)) {
         this.passValueEntered = false;
 
-        const passValue: number[] = this.passValue.split('').map(v => +v);
+        const key: number = +this.passValue
+          .split('')
+          .sort()
+          .reverse()
+          .join('');
+        const passValue: MeirValue = MeirValueService.toMeirValue(key);
 
-        // this.gameState.pass(new DiceModel(passValues[0], passValues[1]));
+        this.gameState.pass(passValue);
       } else {
         this.passValueEntered = true;
       }
