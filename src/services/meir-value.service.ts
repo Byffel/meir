@@ -29,6 +29,10 @@ export class MeirValueService {
     }
   }
 
+  public static toNumber(value: MeirValue): number {
+    return +value.toString().replace('0', '');
+  }
+
   public static randomMeirValue(): MeirValue {
     return MeirValueService.randomEnum(MeirValue);
   }

@@ -7,15 +7,16 @@
     </ion-header>
 
     <ion-content :fullscreen="true">
-      {{ gameState }}
+      <!-- {{ gameState }} -->
       <div id="container">
+        <div>{{ passValue }}</div>
         <div class="dices">
-          <dice v-if="displayDice" :values="values"></dice>
+          <dice v-if="displayDice" :values="value"></dice>
         </div>
         <div v-if="passValueEntered">
           <ion-item>
-            <ion-label position="stacked">Values</ion-label>
-            <ion-input v-model="passValue" type="text"></ion-input>
+            <ion-label position="stacked">Value</ion-label>
+            <ion-input v-model="passValueInput" type="text"></ion-input>
           </ion-item>
           <span v-if="validatePassValue" style="color: red"
             >PassValue invalid</span
@@ -33,9 +34,10 @@
         <ion-button v-if="hasOperation('accuse')" @click="accuse()"
           >du lügsch!</ion-button
         >
-        <ion-button v-if="hasOperation('restart')" @click="restart()"
-          >restart</ion-button
-        >
+        <div v-if="hasOperation('restart')">
+          <div>{{ determineAccusationOutcome }}</div>
+          <ion-button @click="restart()">restart</ion-button>
+        </div>
       </div>
     </ion-content>
   </ion-page>
@@ -64,15 +66,29 @@ export default defineComponent({
     return {
       gameState: new MeirGame(),
       passValueEntered: false,
-      passValue: '' as string
+      passValueInput: '' as string
     };
   },
   computed: {
-    values(): DiceModel {
+    value(): DiceModel {
       return MeirValueService.toDiceModel(this.gameState.getValue());
+    },
+    passValue(): number {
+      return MeirValueService.toNumber(this.gameState.getPassValue());
     },
     displayDice(): boolean {
       return this.gameState.displayDice();
+    },
+    determineAccusationOutcome(): string {
+      const theyLied: boolean =
+        MeirValueService.compare(
+          this.gameState.getValue(),
+          this.gameState.getPassValue()
+        ) < 0;
+
+      return theyLied
+        ? 'You are right. THEY LIED!'
+        : 'You are wrong :( They were right...';
     }
   },
   methods: {
@@ -83,10 +99,13 @@ export default defineComponent({
       this.gameState.peak();
     },
     pass() {
-      if (this.passValueEntered && this.validatePassValue(this.passValue)) {
+      if (
+        this.passValueEntered &&
+        this.validatePassValue(this.passValueInput)
+      ) {
         this.passValueEntered = false;
 
-        const key: number = +this.passValue
+        const key: number = +this.passValueInput
           .split('')
           .sort()
           .reverse()
@@ -99,7 +118,7 @@ export default defineComponent({
       }
     },
     accuse() {
-      this.gameState.accuse();
+      this.gameState.accuse(this.gameState.getPassValue());
     },
     restart() {
       this.gameState.restart();
