@@ -21,6 +21,9 @@
           <span v-if="passValueInvalid" style="color: red"
             >PassValue invalid</span
           >
+          <span v-if="passValueTooSmall" style="color: red"
+            >PassValue is smaller than previous value!</span
+          >
         </div>
         <ion-button v-if="hasOperation('roll')" @click="roll()"
           >roll</ion-button
@@ -68,6 +71,8 @@ export default defineComponent({
       passValueEntered: false,
       passValueInput: '' as string,
       passValueInvalid: false,
+      passValueTooSmall: false,
+      previousPassValue: 0,
     };
   },
   computed: {
@@ -105,9 +110,8 @@ export default defineComponent({
     pass() {
       if (this.passValueEntered) {
         if (this.validatePassValue(this.passValueInput)) {
-          this.passValueEntered = false;
           this.passValueInvalid = false;
-
+          
           const key: number = +this.passValueInput
             .split('')
             .sort()
@@ -115,11 +119,19 @@ export default defineComponent({
             .join('');
           const passValue: MeirValue = MeirValueService.toMeirValue(key);
 
-          this.gameState.pass(passValue);
+          if (this.isValueHigherThanPrevious(passValue)){
+            this.passValueTooSmall = false;
+            this.passValueEntered = false;
+            this.previousPassValue = passValue;
+            this.gameState.pass(passValue);
+          } else {
+            this.passValueTooSmall = true;
+          }
         } else {
           this.passValueInvalid = true;
         }
       } else {
+        this.passValueInput = '';
         this.passValueEntered = true;
       }
     },
@@ -143,6 +155,9 @@ export default defineComponent({
       }
 
       return false;
+    },
+    isValueHigherThanPrevious(input: number): boolean {
+      return (input > this.previousPassValue) ? true : false;
     }
   }
 });
