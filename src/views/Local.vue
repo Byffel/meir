@@ -18,7 +18,7 @@
             <ion-label position="stacked">Value</ion-label>
             <ion-input v-model="passValueInput" type="text"></ion-input>
           </ion-item>
-          <span v-if="validatePassValue" style="color: red"
+          <span v-if="passValueInvalid" style="color: red"
             >PassValue invalid</span
           >
         </div>
@@ -66,7 +66,8 @@ export default defineComponent({
     return {
       gameState: new MeirGame(),
       passValueEntered: false,
-      passValueInput: '' as string
+      passValueInput: '' as string,
+      passValueInvalid: false,
     };
   },
   computed: {
@@ -102,20 +103,22 @@ export default defineComponent({
       this.gameState.peak();
     },
     pass() {
-      if (
-        this.passValueEntered &&
-        this.validatePassValue(this.passValueInput)
-      ) {
-        this.passValueEntered = false;
+      if (this.passValueEntered) {
+        if (this.validatePassValue(this.passValueInput)) {
+          this.passValueEntered = false;
+          this.passValueInvalid = false;
 
-        const key: number = +this.passValueInput
-          .split('')
-          .sort()
-          .reverse()
-          .join('');
-        const passValue: MeirValue = MeirValueService.toMeirValue(key);
+          const key: number = +this.passValueInput
+            .split('')
+            .sort()
+            .reverse()
+            .join('');
+          const passValue: MeirValue = MeirValueService.toMeirValue(key);
 
-        this.gameState.pass(passValue);
+          this.gameState.pass(passValue);
+        } else {
+          this.passValueInvalid = true;
+        }
       } else {
         this.passValueEntered = true;
       }
