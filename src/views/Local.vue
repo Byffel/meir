@@ -128,6 +128,7 @@ export default defineComponent({
             this.passValueTooSmall = true;
           }
         } else {
+          this.passValueTooSmall = false;
           this.passValueInvalid = true;
         }
       } else {
