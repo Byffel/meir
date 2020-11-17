@@ -5,6 +5,7 @@ export interface GameStateModel {
   availableOperations: string[];
   value: MeirValue;
   passValue: MeirValue;
+  displayPassValue: boolean;
   displayDice: boolean;
 }
 
@@ -17,6 +18,7 @@ export class GameStateModelBuilder {
       availableOperations: [],
       value: MeirValue.THIRTY_ONE,
       passValue: MeirValue.THIRTY_ONE,
+      displayPassValue: false,
       displayDice: false
     };
   }
@@ -43,6 +45,11 @@ export class GameStateModelBuilder {
 
   setPassValue(passValue: MeirValue): GameStateModelBuilder {
     this.gameState.passValue = passValue;
+    return this;
+  }
+
+  displayPassValue(): GameStateModelBuilder {
+    this.gameState.displayPassValue = true;
     return this;
   }
 

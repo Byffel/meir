@@ -9,7 +9,7 @@
     <ion-content :fullscreen="true">
       <!-- {{ gameState }} -->
       <div id="container">
-        <div>{{ passValue }}</div>
+        <div v-if="displayPassValue">{{ passValue }}</div>
         <div class="dices">
           <dice v-if="displayDice" :values="value"></dice>
         </div>
@@ -78,6 +78,9 @@ export default defineComponent({
     },
     displayDice(): boolean {
       return this.gameState.displayDice();
+    },
+    displayPassValue(): boolean {
+      return this.gameState.displayPassValue();
     },
     determineAccusationOutcome(): string {
       const theyLied: boolean =

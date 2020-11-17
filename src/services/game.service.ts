@@ -47,6 +47,9 @@ export class MeirGame implements MeirGameOperations {
   getPassValue(): MeirValue {
     return this.state.getPassValue();
   }
+  displayPassValue(): boolean {
+    return this.state.displayPassValue();
+  }
 }
 
 abstract class MeirState implements MeirGameOperations {
@@ -88,6 +91,10 @@ abstract class MeirState implements MeirGameOperations {
       throw new Error('passValue is not defined');
     }
     return this.gameState.passValue;
+  }
+
+  displayPassValue(): boolean {
+    return this.gameState.displayPassValue;
   }
 }
 
@@ -163,6 +170,7 @@ class PassedState extends MeirState {
       .addAvailableOperations('roll', 'pass', 'accuse')
       .setValue(values)
       .setPassValue(passValue)
+      .displayPassValue()
       .build();
     super(gameState);
   }
