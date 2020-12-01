@@ -7,9 +7,9 @@
     </ion-header>
 
     <ion-content :fullscreen="true">
-      <!-- {{ gameState }} -->
       <div id="container">
-        <div v-if="displayPassValue">{{ passValue }}</div>
+        {{ localPassValue }}
+        <!-- <div v-if="displayPassValue">{{ passValue }}</div> -->
         <div class="dices">
           <dice v-if="displayDice" :values="value"></dice>
         </div>
@@ -73,6 +73,7 @@ export default defineComponent({
       passValueInvalid: false,
       passValueTooSmall: false,
       previousPassValue: 0,
+      localPassValue: '' as string
     };
   },
   computed: {
@@ -111,7 +112,7 @@ export default defineComponent({
       if (this.passValueEntered) {
         if (this.validatePassValue(this.passValueInput)) {
           this.passValueInvalid = false;
-          
+
           const key: number = +this.passValueInput
             .split('')
             .sort()
@@ -119,10 +120,11 @@ export default defineComponent({
             .join('');
           const passValue: MeirValue = MeirValueService.toMeirValue(key);
 
-          if (this.isValueHigherThanPrevious(passValue)){
+          if (this.isValueHigherThanPrevious(passValue)) {
             this.passValueTooSmall = false;
             this.passValueEntered = false;
             this.previousPassValue = passValue;
+            this.localPassValue = this.passValueInput;
             this.gameState.pass(passValue);
           } else {
             this.passValueTooSmall = true;
@@ -140,6 +142,7 @@ export default defineComponent({
       this.gameState.accuse(this.gameState.getPassValue());
     },
     restart() {
+      this.localPassValue = '';
       this.gameState.restart();
     },
     hasOperation(operation: string): boolean {
@@ -158,7 +161,7 @@ export default defineComponent({
       return false;
     },
     isValueHigherThanPrevious(input: number): boolean {
-      return (input > this.previousPassValue) ? true : false;
+      return input > this.previousPassValue ? true : false;
     }
   }
 });
