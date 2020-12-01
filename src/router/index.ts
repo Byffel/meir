@@ -2,7 +2,7 @@ import { createRouter, createWebHashHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
 import Home from '../views/Home.vue';
 import Local from '../views/Local.vue';
-import Lobby from '../views/Lobby.vue';
+import RemoteGame from '../views/RemoteGame.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -21,8 +21,8 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/lobby',
-    name: 'Lobby',
-    component: Lobby
+    name: 'RemoteGame',
+    component: RemoteGame
   }
 ];
 
